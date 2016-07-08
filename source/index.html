@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1" user-scalable="no">
+    
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>思博课</title>
+
+    <link rel="shortcut icon" href="images/favicon.png">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/jquery.fullPage.css" />
+    <style>
+        #fullpage div {
+            color: #FFF;
+            text-align: center;
+        }
+    </style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fullPage.min.js"></script>
+    <script src="js/echarts.min.js"></script>
+
+</head>
+<body>
+    <div id="fullpage">
+        <div class="section active">
+            <img src="img/1.jpg" alt="..." class="img-rounded">
+
+        </div>
+        <div class="section">
+            <div class="slide"><img src="img/2.jpg" alt="..." class="img-rounded"></div>
+            <div class="slide">学生团队所获荣誉</div>
+            <div class="slide">历史荣誉墙</div>
+        </div>
+        <div class="section"><div id="container" style="height: 100%"></div></div>
+
+        <div class="section">招生信息及业务规则</div>
+    </div>
+
+    <script>
+        $(function () {
+            $('#fullpage').fullpage({
+                paddingTop:'0px',
+                'verticalCentered': false,
+                resize: true,
+                'css3': false,
+                fitToSection:true,
+                anchors: ['page1', 'page2', 'page3', 'page4'],
+                'sectionsColor': ['#254875', '#254875', '#fff', '#695684'],
+                'navigation': true,
+                loopBottom: true,
+                'navigationPosition': 'right',
+                'navigationTooltips': ['首页', '团队', '荣誉', '作品'],
+                'scrollOverflow': true,
+
+                onLeave: function(index, nextIndex, direction){
+                    var leavingSection = $(this);
+                    //after leaving section 2
+                    if(index == 2 && direction =='down'){
+             
+                        var dom = document.getElementById("container");
+                        var myChart = echarts.init(dom);
+                        var app = {};
+                        option = null;
+                        var base = +new Date(2014, 9, 3);
+                        var oneDay = 24 * 3600 * 1000;
+                        var date = [];
+
+                        var data = [Math.random() * 150];
+                        var now = new Date(base);
+
+                        function addData(shift) {
+                            now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('-');
+                            date.push(now);
+                            data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
+                            if (shift) {
+                                date.shift();
+                                data.shift();
+                            }
+                            now = new Date(Date.parse(now) + 24 * 3600 * 1000);
+                        }
+
+                        for (var i = 1; i < 100; i++) {
+                            addData();
+                        }
+
+                        option = {
+                            xAxis: {
+                                type: 'category',
+                                boundaryGap: false,
+                                data: date
+                            },
+                            yAxis: {
+                                boundaryGap: [0, '50%'],
+                                type: 'value'
+                            },
+                            series: [
+                                {
+                                    name: '成交',
+                                    type: 'line',
+                                    smooth: true,
+                                    symbol: 'none',
+                                    stack: 'a',
+                                    areaStyle: {
+                                        normal: {}
+                                    },
+                                    data: data
+                                }
+                            ]
+                        };
+
+                        app.timeTicket = setInterval(function () {
+                            addData(true);
+                            myChart.setOption({
+                                xAxis: {
+                                    data: date
+                                },
+                                series: [{
+                                    name: '成交',
+                                    data: data
+                                }]
+                            });
+                        }, 500);;
+                        if (option && typeof option === "object") {
+                            myChart.setOption(option, true);
+                        }
+                    }
+                },
+                afterRender: function () {
+                    var pluginContainer = $(this);
+                    alert("页面未构建前，可以初始化其它插件");
+                }
+            })
+        })
+
+    </script>
+</body>
+</html>
